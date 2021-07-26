@@ -4,5 +4,5 @@
   
 # Technologies Used
 
-  Front-End: HTML, CSS, Bootstrap, JavaScript
-  Back-End: Django
+  1. Front-End: HTML, CSS, Bootstrap, JavaScript
+  2. Back-End: Django
