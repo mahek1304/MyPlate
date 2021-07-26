@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block style %}
+<style>
+    img{
+        height: 650px;
+        width: 700px;
+        float: right;
+        border-radius: 330px;
+        margin-top: 10px;
+        margin-bottom: 10px; 
+    }
+    h1{
+        font-size: 80px;
+        padding-top: 60px;
+        padding-left: 120px;
+        font-family: 'STIX Two Math', serif;
+    }
+    p{
+        font-size: 25px;
+        padding-left: 120px;
+        padding-top: 20px;
+    }
+    .btn{
+        margin-left: 120px;
+        margin-top: 10px;
+        background-color: #0388fc;
+        color: white;
+        font-size: 19px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<img src="{% static 'images/food4.jpeg' %}" alt="">
+<div class = "container">
+    <h1>Fitness starts <br> with what <br> you eat!</h1>
+    <p>Take control of your goals. <br> Track calories and log activities with <b><i>MyPlate.</i></b></p>
+    <a href="{% url 'account_login' %}" class = "btn">Let's Get Started</a>
+</div>
+{% endblock %}

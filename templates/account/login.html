@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+{% load i18n %}
+{% block style %}
+<style>
+body{
+    background-image: linear-gradient(to right, aqua, rgb(150, 68, 226), rgb(205, 43, 226));
+  }
+  .btn_google{
+    background-color: black;
+    padding-right: 37px;
+    padding-bottom: 5px;
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    border-radius: 10px;
+  }
+  section{
+    background-color: white;
+    height: 540px;
+    width: 600px;
+    border: 2px solid rgb(94, 86, 86);
+    padding: 30px;
+    margin-top: 55px;
+    margin-left: 350px;
+    border-radius: 20px;
+  }
+  h1{
+    font-family: 'Open Sans', sans-serif;
+    font-size: 50px;
+  }
+  .secondaryAction{
+    float: right;
+  }
+</style>
+{% endblock %}
+
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<div class = "container">
+  <section>
+    <center><h1>LogIn</h1></center>
+    {% get_providers as socialaccount_providers %}
+
+    {% if socialaccount_providers %}
+    <center><p>Please login either with you Google account: </p></center>
+    <center><button class="btn_google">{% include "socialaccount/snippets/provider_list.html" with process="login" %}</button><p></p></center>
+    <center><h4>OR</h4></center><p></p>
+    <center><p><a href="{{ signup_url }}">Sign Up</a> for <b>MyPlate Account</b> and Sign In below.</p></center>
+    {% include "socialaccount/snippets/login_extra.html" %}
+
+    {% else %}
+    <p>{% blocktrans %}If you have not created an account yet, then please
+    <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+
+    {% endif %}
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      {{ form|bootstrap }}
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <p></p><a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+    <button class="primaryAction btn btn-success" type="submit">{% trans "Sign In" %}</button>
+    </form>
+</section>
+</div>
+{% endblock %}

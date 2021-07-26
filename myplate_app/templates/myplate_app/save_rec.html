@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap %}
+
+{% block style %}
+<style>
+body{
+  background-image: url(../../static/images/food7.jpg); 
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+section{
+    text-align: center;
+    height: 260px;
+    width: 600px;
+    padding: 30px;
+    margin-top: 200px;
+    margin-left: 370px;
+}
+.btn{
+    background-color: #236b32;
+    color: aliceblue;
+}
+.btn:hover{
+    color: aliceblue;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class = "container">
+<section>
+<h3>Name: {{user.first_name}} {{ user.last_name }}</h3>
+<h3>Goal Set: <span id = "usergoal"></span></h3>    <!--span id gets the value stored in goal(line 21) -->
+<h3>Total Calories Consumed: <span id = "usertotCal"></span></h3>   <!--span id gets the value stored in calories (line 22) -->
+<form method = "POST" action="/myplate_app/save_rec/">
+    {% csrf_token %}
+    <input type="hidden" name="user" id="user" value = "{{ user.first_name }} {{ user.last_name }}">    <!--These three input tags are
+                                                                                                        are used to save the records as 
+                                                                                                        hidden fields-->
+    <input type="hidden" name = "totalCalories" id = "totalCalories">
+    <input type="hidden" name="goal_set" id="goal_set"><p></p>
+    <button type="submit" class="btn">Check Previous Records</button>
+</form>
+</section>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    var goal = localStorage.getItem('goal_set1')    //the value of goal stored in localstorage is accessed using the name 'goal_set1' which was used in checkout template.
+    var calories = localStorage.getItem('totalCalories1')
+    document.getElementById('usergoal').innerHTML = goal
+    document.getElementById('usertotCal').innerHTML = calories
+    $('#totalCalories').val(calories);  //sets the value for hidden inputs records
+    $('#goal_set').val(goal);
+
+    
+</script>
+{% endblock %}

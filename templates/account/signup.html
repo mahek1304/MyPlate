@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+{% load i18n %}
+{% block style %}
+<style>
+  body{
+    background-image: linear-gradient(to right, aqua, rgb(150, 68, 226), rgb(205, 43, 226));
+  }
+  h1{
+  font-family: 'Open Sans', sans-serif;
+  font-size: 50px;
+}
+section{
+  background-color: white;
+  height: 540px;
+  width: 600px;
+  padding: 30px;
+  margin-top: 55px;
+  margin-left: 350px;
+  border-radius: 20px;
+}
+.btn{
+  border: 1px solid white;
+  background-image: linear-gradient(to right, aqua, rgb(150, 68, 226), rgb(205, 43, 226));
+  width: 60%;
+  margin-top: 10px;
+  margin-left: 100px;
+  font-size: 20px;
+}
+.signup{
+  padding-top: 10px;
+}
+</style>
+
+{% endblock %}
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div class = "container">
+<section>
+
+  <center><h1>Sign Up</h1></center>
+
+  <center><p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p></center>
+
+  <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    {{form|bootstrap}}
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <button type="submit" class = "btn btn-success">{% trans "Sign Up" %} &raquo;</button>
+  </form>
+</section>
+</div>
+
+{% endblock %}

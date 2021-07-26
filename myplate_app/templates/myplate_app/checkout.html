@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap %}
+
+{% block style %}
+
+<style>
+ul{
+    font-size: 18px;
+}
+.food{
+padding-top: 10px;
+}
+.save{
+    background-color: #201585;
+    color: aliceblue;
+    font-size: 20px;
+}
+.save:hover{
+    color: aliceblue;
+}
+.total{
+    display: inline;
+    float: right;
+    font-size: 23px;
+    margin-top: 10px;
+}
+.goal{
+    
+    font-size: 23px;
+    margin-top: 10px;
+}
+</style>
+
+{% endblock %}
+{% block content %}
+
+<div class = "container">
+<h3 class = "food">Your selected food items are:</h3>
+    <div class="my-4">
+        <ul class="list-group" id="items">
+        </ul>
+        <p class = "total">Total calories: <span id = "total_cal"></span></p> 
+        <p class = "goal">Goal: <span id = "goal">{{goal}}</span></p>
+        <h3 id = "compare"></h3>
+    </div>
+
+    <a href="{% url 'myplate_app:save_rec' %}" class = "save btn">Save Records</a>
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script>
+    if (localStorage.getItem('cart') == null)   //if the cart is undefined then we need to create the cart which is a dict
+    { 
+        var cart = {};
+    } else 
+    {
+        cart = JSON.parse(localStorage.getItem('cart'));
+    }
+    var total_calories = 0
+    var sum = 0;
+    for (item in cart) 
+    {
+        let name = cart[item][1];   //The array is denied in list.html page
+        let qty = cart[item][0];
+        let calories = cart[item][2];
+        sum = sum + qty;            //To get the total count of fooditems
+        total_calories = parseFloat(total_calories + (qty * calories)); //To calculate the total calorie value 
+        if (qty != 0){
+            mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">${name}
+                    <span class="btn btn-dark">${qty}</span></li>`
+            $('#items').append(mystr);
+        }
+    }
+    document.getElementById("total_cal").innerHTML = total_calories;    //The total calories value gets displayed in the html tag that has the id as 'Total_cal'
+
+    var goal = parseFloat(document.getElementById("goal").innerHTML);
+    console.log(goal)
+
+    //For displaying the difference between the goal and valories consumed.
+    if (goal > total_calories)
+    {
+        diff = parseFloat(goal - total_calories).toFixed(2);
+        str = `You are ${diff} calories away to reach your goal!`
+        $('#compare').append(str);
+        document.getElementById("compare").style.color = "orange";
+    }
+    else if(goal < total_calories)
+    {
+        diff = parseFloat(total_calories - goal).toFixed(2);
+        str = `You have execeeded your goal by ${diff}!`
+        $('#compare').append(str);
+        document.getElementById("compare").style.color = "red";
+    }
+    else
+    {
+        str = `Your goal is equal to your total calories consumed! You have consumed ${goal} calories.`
+        $('#compare').append(str);
+        document.getElementById("compare").style.color = "green";
+    }
+
+   localStorage.setItem('goal_set1',goal);  //the val of goal is stored in localstorage and the same value is retrieved using the name 'goal_set1' in save_rec template
+   localStorage.setItem('totalCalories1',total_calories);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,110 @@
+<!--Template for displaying all the food items-->
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap %}
+{% block content %}
+{% block style %}
+
+<style>
+form{
+  font-size: 20px;
+  width: 300px;
+  text-align: center;
+}
+.search{
+margin: 10px;
+font-size: 20px;
+background-color: #2ae8d7;
+}
+
+
+</style>
+
+{% endblock %}
+<div class = "container">
+<center><form method="GET" class = "filter">
+  {{filter.form|bootstrap}}
+  <button type="Submit" class="search btn">Search</button>
+</form></center>
+
+<div class="row row-cols-1 row-cols-md-4 g-4" id = "main-div">
+    {%for food in filter.qs %}           <!--The FoodListView creates a list 'fooditems_list from where we can access each food item'-->   
+        <div class="col">
+          <div class="card text-center">
+            <img src="{{food.image.url}}" class="card-img-top" alt="{{food.name}}" height = "280">
+            <div class="card-body">
+              <h3 class="card-title" id = "name{{food.id}}">{{food.name}}</h3>
+              <h5 class="card-text">Calories = <span id = "calories{{food.id}}"> {{food.calorie}}</span></h5>
+              <span id = "food{{food.id}}" class = "food"><button class="btn btn-primary cart" class = "cart" id = "{{food.id}}" >Add to Cart</button></span>
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+</div>
+
+<a href="{% url 'myplate_app:checkout' %}" class="search btn">CheckOut</a>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  console.log('working')
+  if(localStorage.getItem('cart') == null)  //If the cart is not created, the create the cart (it is a dictionary)
+    {
+      var cart={};
+    }
+  else                                    //else if the cart is created
+  {
+    cart= JSON.parse(localStorage.getItem('cart')); //used to parse the cart
+  }
+
+
+  //Working of Add to Cart Button
+  $('.food').on('click', 'button.cart', function() {
+    var idstr = this.id.toString();   //The food id needs to be converted into string
+    if (cart[idstr] != undefined) {   //If the particular food item is defined, then increment its id by 1
+        qty = cart[idstr][0] + 1;
+        
+    } else {                                                    //If the particular food item is not defined then 
+        qty = 1;                                                //initialise the quantity to 1
+        name = document.getElementById('name'+idstr).innerHTML  //get the food name from the tag that has the name + id
+        calories = document.getElementById('calories'+idstr).innerHTML //gets the calorie value from the tag named 'calories + id'
+        cart[idstr] = [qty, name, parseFloat(calories)]; //Store the food name, its quantity and the calorie val in a the particular food id's key val for cart dict
+
+    }
+    updateCart(cart);   //The cart gets updated
+});
+  
+function updateCart(cart) {
+    var x = $('#main-div .food').length;  //$('the main-div is the id of the ele in which we want to search the particular class'.food is the class we want to find in the main-div) and the .length gives the count of the class food
+    for (var item in cart) {              //item here is the fooditem id
+      for(let j=0; j<x; j++){             //this will iterate from 0-x
+        if('food'+item == document.getElementsByClassName("food")[j].id){   //if the food item's id we click is matched with the id of that same food item while iterating through all the food items
+          document.getElementById('food'+item).innerHTML = "<button id='minus" + item + "' class='btn btn-primary minus'>-</button> <span id='val" + item + "''>" + cart[item][0] + "</span> <button id='plus" + item + "' class='btn btn-primary plus'> + </button>";  //Updation of add to cart button: //The html tag with span id = 'food' gets replaced with the minus sign, the quantity of food item and the plus sign
+        }
+        else{
+          continue;
+        }
+      } 
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  $('.food').on("click", "button.minus", function() {
+    a = this.id.slice(5, );   //The var 'a' stores the fooditem's id, slice is done to neglect the 'minus' part since that is also saved along withe the id
+    cart[a][0] = cart[a][0] - 1;
+    cart[a][0] = Math.max(0, cart[a][0]); //To avoid the value to go below 0
+    document.getElementById('val' + a).innerHTML = cart[a][0];  //To substitute the quantity after updation, ie after clicking on '-' in place of  previously displayed quantity (the tag having id as val + fooditem's id )
+    updateCart(cart);
+  });
+
+  $('.food').on("click", "button.plus", function() {
+    a = this.id.slice(4, );   //This works just like the above function, 'a' takes the id of the fooditem neglecting the 'plus' word
+    cart[a][0] = cart[a][0] + 1;
+    document.getElementById('val' + a).innerHTML = cart[a][0];  //To substitute the quantity after updation, ie after clicking on '+' in place of  previously displayed quantity (the tag having id as val + fooditem's id )
+    updateCart(cart);
+  });
+  
+
+</script>
+{% endblock%}
